@@ -17,21 +17,12 @@ function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      return new Promise((resolve) => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-          setUser(currentUser || null);
-          setTimeout(() => {
-            setLoading(false);
-            resolve();
-          }, 3000); // تأخير 3 ثواني
-        });
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser || null);
+      setLoading(false);
+    });
 
-        return () => unsubscribe();
-      });
-    };
-
-    fetchUserData();
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -39,7 +30,7 @@ function App() {
       if (user) {
         await requestPermission(); 
         try {
-          const token = await getToken(messaging, { vapidKey: 'BJzaSyAThQ-QC7Iuia2WWv673q9-s172edbPTu46kU5D_xvG4E' }); 
+          const token = await getToken(messaging, { vapidKey: 'BJzaSyAThQ-QC7Iuia2WWv673q9-s172edbPTu46kU5D_xvG4E' });
           if (token) {
             await setDoc(doc(db, 'users', user.uid), { fcmToken: token }, { merge: true });
             console.log('Token saved to Firestore for user:', user.uid);
@@ -59,7 +50,6 @@ function App() {
 
   return (
     <Routes>
-      
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/home" element={user ? <Home /> : <Navigate to="/login" />} />

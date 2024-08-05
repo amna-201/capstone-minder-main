@@ -50,7 +50,7 @@ const MedicationProvider = ({ children }) => {
         if ('Notification' in window && Notification.permission === 'granted') {
             new Notification(`Reminder: ${name}`, {
                 body: `You need to purchase ${name} before it runs out.`,
-                icon: 'https://path/to/reminderIcon.png' 
+                icon: 'https://path/to/reminderIcon.png'
             });
         } else {
             console.log('Notification permission not granted or Notification API is not supported.');

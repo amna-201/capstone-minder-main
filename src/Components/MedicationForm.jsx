@@ -101,13 +101,13 @@ const MedicationForm = () => {
         await markAsTaken(id, doseTime);
     };
 
-    const handleReminderClick = (medication) => {
-        const { name } = medication;
+    const handleReminderClick = (reminder) => {
+        const { name } = reminder;
         setReminderList(prev => prev.map(item =>
             item.name === name ? { ...item, purchased: !item.purchased } : item
         ));
 
-        if (!medication.purchased) {
+        if (!reminder.purchased) {
             alert(`Reminder to purchase ${name} soon.`);
         }
     };
@@ -222,42 +222,52 @@ const MedicationForm = () => {
                 {medications.map((med) => (
                     <div key={med.id} className="mb-4 p-4 bg-gray-100 rounded shadow-md">
                         <h3 className="text-lg font-bold">{med.name}</h3>
+                        <p>Total Pills: {med.total}</p>
                         <p>Total Pills: {med.totalPills}</p>
-                        <p>Remaining Pills: {med.doses.filter(d => !d.taken).length}</p>
-                        <div className="mb-2">
-                            {med.doses.map((dose, index) => (
-                                <div key={index} className="flex items-center justify-between">
-                                    <span>{new Date(dose.doseTime).toLocaleString()}</span>
-                                    {!dose.taken ? (
-                                        <button
-                                            onClick={() => handleMarkAsTaken(med.id, dose.doseTime)}
-                                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
-                                        >
-                                            Mark as Taken
-                                        </button>
-                                    ) : (
-                                        <span className="text-green-600 font-bold">Taken</span>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
+                        <p>First Dose Time: {new Date(med.firstDoseTime).toLocaleString()}</p>
+                        <p>Interval: {med.interval} hours</p>
+                        <p>Medication Type: {med.medicationType}</p>
+                        {med.doses.map((dose, index) => (
+                            <div key={index} className="flex items-center">
+                                <p className="mr-2">{new Date(dose.doseTime).toLocaleString()}</p>
+                                <button
+                                    onClick={() => handleMarkAsTaken(med.id, dose.doseTime)}
+                                    className={`bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded ${
+                                        dose.taken ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
+                                    disabled={dose.taken}
+                                >
+                                    {dose.taken ? 'Taken' : 'Mark as Taken'}
+                                </button>
+                            </div>
+                        ))}
                     </div>
                 ))}
             </div>
-            <div>
-                <h3 className="text-xl font-bold mb-2">Medication Purchase Reminders</h3>
-                {reminderList.map((reminder, index) => (
-                    <div key={index} className="mb-2 p-2 bg-yellow-100 rounded shadow-md">
-                        <span className="font-bold">{reminder.name}</span> - 
-                        <span> Reminder Date: {new Date(reminder.reminderDate).toLocaleDateString()}</span>
-                        <button
-                            onClick={() => handleReminderClick(reminder)}
-                            className="ml-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded"
-                        >
-                            {reminder.purchased ? 'Purchased' : 'Mark as Purchased'}
-                        </button>
-                    </div>
-                ))}
+            <div className="mt-6">
+                <h3 className="text-lg font-bold mb-2">Reminder List</h3>
+                {reminderList.length > 0 ? (
+                    <ul className="list-disc list-inside">
+                        {reminderList.map((reminder, index) => (
+                            <li key={index} className="mb-2 flex items-center">
+                                <span className={`mr-2 ${reminder.purchased ? 'line-through text-gray-500' : ''}`}>
+                                    {reminder.name} - {new Date(reminder.reminderDate).toLocaleString()}
+                                </span>
+                                <button
+                                    onClick={() => handleReminderClick(reminder)}
+                                    className={`bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded ${
+                                        reminder.purchased ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
+                                    disabled={reminder.purchased}
+                                >
+                                    {reminder.purchased ? 'Purchased' : 'Mark as Purchased'}
+                                </button>
+                            </li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No reminders set.</p>
+                )}
             </div>
         </div>
     );

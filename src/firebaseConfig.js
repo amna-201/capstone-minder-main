@@ -1,4 +1,3 @@
-// firebase.js
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
@@ -15,19 +14,15 @@ const firebaseConfig = {
   measurementId: "G-676ST1R9VY"
 };
 
-// تهيئة تطبيق Firebase
 const app = initializeApp(firebaseConfig);
 
-// الحصول على خدمات Firebase
 const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 const messaging = getMessaging(app);
 
-// تصدير الخدمات
 export { app, db, auth, storage, messaging };
 
-// وظيفة لطلب إذن الإشعارات
 export const requestPermission = async () => {
   if ('Notification' in window) {
     try {
@@ -55,12 +50,10 @@ export const requestPermission = async () => {
   }
 };
 
-// وظيفة لإرسال الإشعارات
 export const sendNotification = async (token, title, body) => {
   console.error('sendNotification function needs to be implemented server-side using Firebase Admin SDK.');
 };
 
-// التعامل مع الرسائل الواردة
 onMessage(messaging, (payload) => {
   console.log('Message received:', payload);
   if (Notification.permission === 'granted') {
